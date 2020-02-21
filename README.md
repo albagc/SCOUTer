@@ -16,3 +16,5 @@ plotdist2: plot the distance-plot.
 scoreplot2: plot the score plot.
  - Inputs: X (matrix with the observations), pcamodel (PCA model from which the distances will be calculated), mode (string with values 'new' or 'ref' depenging on if the data in X is the reference data set used for the PCA model bulding or new data that will be marked differently in the plot), markeropt (optional argument with default values indicating the appearance of the points in the plot) and scoreopt (optional argument with default values indicating the components to be plotted and the parameted alpha for the confidence ellipsoid in the plot).
  - Outputs: T (values for the scores T of the observations in X), t1t2 (Line object with graphical properties of the points in the plot) and ell (Line object with graphical properties of the ellipse in the plot).
+ 
+genoutXsteps: executes genoutX with a number of n_steps between the SPEx and T2x values and the SPEt and T2t target values.
