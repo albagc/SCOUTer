@@ -1,7 +1,7 @@
 function [SPE, T2, ax0] = distplot(X, pcamodel, obstag, inter)
 % Statistically Controlled OUTliERs 
-% A. González Cebrián, A. Folch-Fortuny, F. Arteaga and A. Ferrer
-% Copyright (C) 2020 A. González Cebrián and F. Arteaga
+% A. Gonzalez Cebrian, A. Folch-Fortuny, F. Arteaga and A. Ferrer
+% Copyright (C) 2020 A. Gonzalez Cebrian, A. Folch-Fortuny and F. Arteaga
 % 
 % This program is free software: you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ function [SPE, T2, ax0] = distplot(X, pcamodel, obstag, inter)
 % ax0: handle with the graphical object containing the distance plot.
 %% Check inputs
 if nargin < 3
-    disp('No tag provided do distinguish between observations.')
+    disp('No tag provided to distinguish between observations.')
     obstag = zeros(size(X,1),1);
     inter = 'on';
 elseif nargin == 3
@@ -88,6 +88,10 @@ grid on, xlabel('T^2'), ylabel('SPE'), title('Distance plot')
 ax0 = gca;
 % If the plot is interactive
 if strcmp(inter,'on')
+    annotation('textbox', [0.6, 0.6, 0.3, 0.1], 'String', ...
+        {'Please click on your', 'observation of interest'},...
+        'FitBoxToText', 'on', 'BackgroundColor', 'w', 'HorizontalAlignment',...
+        'center')
     set(gcf,'WindowButtonDownFcn',{@mytestcallback,T2,SPE,E,T2matrix,ax0})
 end
 % Function being executed when the user clicks a point in the distance plot
@@ -95,6 +99,7 @@ end
         xpt = get(ax0,'CurrentPoint');
         dist2 = sum((xpt(1,1:2) - [t2vec,spevec]) .^ 2, 2);
         [~,iobs] = min(dist2);
+        delete(findall(gcf,'type','annotation'))
         % Contribution to SPE (error)
         subplot(2,4,[3,4]);
         b1 = bar(errmat(iobs,:),'b','EdgeColor','none');

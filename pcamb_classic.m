@@ -1,7 +1,7 @@
 function [pcamodel] = pcamb_classic(X, ncomp, alpha, prepro)
 % Statistically Controlled OUTliERs 
-% A. González Cebrián, A. Folch-Fortuny, F. Arteaga and A. Ferrer
-% Copyright (C) 2020 A. González Cebrián and F. Arteaga
+% A. Gonzalez Cebrian, A. Folch-Fortuny, F. Arteaga and A. Ferrer
+% Copyright (C) 2020 A. Gonzalez Cebrian, A. Folch-Fortuny and F. Arteaga
 % 
 % This program is free software: you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by
