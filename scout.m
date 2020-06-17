@@ -1,4 +1,4 @@
-function [outscout, SPE_0, T2_0] = scout(X, pcamodel, mode, varargin)
+function [outscout, SPE_0, T2_0] = scout(X, pcamodel, mode, options)
 % Statistically Controlled OUTliers
 % A. Gonzalez Cebrian, A. Folch-Fortuny, F. Arteaga and A. Ferrer
 % Copyright (C) 2020 A. Gonzalez Cebrian, A. Folch-Fortuny and F. Arteaga
@@ -16,6 +16,10 @@ function [outscout, SPE_0, T2_0] = scout(X, pcamodel, mode, varargin)
 % You should have received a copy of the GNU General Public License
 % along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %
+% DESCRIPTION
+% 
+% Performs the SCOUTing on the observations of X according to the provided
+% input parameters.
 %
 % INPUTS
 %
@@ -43,32 +47,30 @@ function [outscout, SPE_0, T2_0] = scout(X, pcamodel, mode, varargin)
 %           obsN stepM
 %   - T2: column vector with the T^2 values of the observations in X.
 %   - SPE: column vector with the SPE values of the observations in X.
-%   if mode = 'steps'
-%       - step: column vector with the intermediate step between {SPE,T2}0 and
-%           {SPE, T2}M.
-%   if mode = 'grid'
-%       - step_spe: column vector indicating the step between SPE0 and SPEM.
-%       - step_t2: column vector indicating the step between T20 and T2M.
+%   - tag: column vector indicating if the observation belongs to the
+%   reference data set (0) or to the new generated nada (1).
+%   - step_spe: column vector indicating the step between SPE0 and SPEM.
+%   - step_t2: column vector indicating the step between T20 and T2M.
 % SPE_0: vector with the initial SPE values.
 % T2_0: vector with the initial Hotelling's T^2 values.
 %
-narginchk(3, 17)
-options = struct('nsteps', 1, 't2y', 'none', 'spey', 'none', ...
-    'nstepsspe', 1, 'nstepst2', 1, 'gspe', 1, 'gt2', 1);
-optionNames = fieldnames(options);
-if round(length(varargin)/2)~=length(varargin)/2 % Check pairs
-    error('Each Name argument needs a value pair argument')
+arguments
+    X double
+    pcamodel struct
+    mode string {mustBeMember(mode, ["simple", "steps", "grid"])} = "simple"
+    options.nsteps double {mustBeInteger} = 1
+    options.t2y double = nan
+    options.spey double = nan
+    options.nstepsspe double {mustBeInteger} = 1
+    options.nstepst2 double {mustBeInteger} = 1
+    options.gspe double = 1
+    options.gt2 double = 1
 end
-for pair = reshape(varargin,2,[])
-    inName = lower(pair{1});
-    if any(strcmp(inName,optionNames))
-        options.(inName) = pair{2};
-    else
-        error('The %s input is not recognized by this function',inName)
-    end
-end
+
 T2target = options.t2y;
+if isnan(T2target), T2target = 'none';end
 SPEtarget = options.spey;
+if isnan(SPEtarget), SPEtarget = 'none';end
 nsteps = options.nsteps;
 nstepsspe = options.nstepsspe;
 nstepst2 = options.nstepst2;
@@ -76,11 +78,11 @@ gspe = options.gspe;
 gt2 = options.gt2;
 
 switch mode
-    case 'simple'
+    case "simple"
         [outscout, SPE_0, T2_0] = scoutsimple(X, pcamodel, T2target, SPEtarget);
-    case 'steps'
+    case "steps"
         [outscout, SPE_0, T2_0] = scoutsteps(X, pcamodel, T2target, SPEtarget, nsteps, gspe, gt2);
-    case 'grid'
+    case "grid"
         [outscout, SPE_0, T2_0] = scoutgrid(X, pcamodel, T2target, SPEtarget, nstepsspe, nstepst2, gspe, gt2);  
 end
 

@@ -1,5 +1,5 @@
-function dscplot(X, pcamodel, clicktoggle, pcx, pcy, obstag, steps_spe, steps_t2)
-% Statistically Controlled OUTliERs
+function dscplot(X, pcamodel, options)
+% Statistically Controlled OUTliers
 % A. Gonzalez Cebrian, A. Folch-Fortuny, F. Arteaga and A. Ferrer
 % Copyright (C) 2020 A. Gonzalez Cebrian, A. Folch-Fortuny and F. Arteaga
 %
@@ -16,34 +16,48 @@ function dscplot(X, pcamodel, clicktoggle, pcx, pcy, obstag, steps_spe, steps_t2
 % You should have received a copy of the GNU General Public License
 % along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %
+% DESCRIPTION
+%
+% Returns the distance plot (left) and score plot (right) according to the
+% input arguments.
 %
 % INPUTS
 %
 % X: data matrix with observations to be displayed in the distance plot.
 % pcamodel: struct with the information of the PCA model.
+% clicktoggle (optional): string to control interactive plot options with
+%   values "on" or "off". Default set to "on". 
+% pcx (optional): integer with the x-axis PC. Default set to 1.
+% pcy (optional): integer with the y-axis PC. Default set to 2.
 % obstag (optional): column vector of integers indicating the group of each
 %   observation. Default value set to zeros(size(X,1),1).
-% inter (optional): string indicating the status of the plot interactivity.
+% steps_spe (optional): column vector of integers indicating the SPE step 
+%   of each observation. Default value set to zeros(size(X,1),1).
+% steps_t2 (optional): column vector of integers indicating the T^2 step 
+%   of each observation. Default value set to zeros(size(X,1),1).
 % Default value set to 'on'.
 %
-% OUTPUTS
+% OTPUTS
 %
-% SPE: column vector with the Squared Prediction Error for each observation
-% in X.
-% T2: column vector with the Hotelling's T^2 value for each observation
-% in X.
-% ax0: handle with the graphical object containing the distance plot.
+% (none) 
 arguments
     X double
     pcamodel struct
-    clicktoggle string = 'on';
-    pcx double = 1;
-    pcy double = 2;
-    obstag double = zeros(size(X, 1), 1);
-    steps_spe double = zeros(size(X, 1), 1);
-    steps_t2 double = zeros(size(X, 1), 1);
+    options.click string {mustBeMember(options.click, ["on", "off"])} = 'on'
+    options.pcx double = 1
+    options.pcy double = 2
+    options.obstag double = zeros(size(X, 1), 1)
+    options.steps_spe double = zeros(size(X, 1), 1)
+    options.steps_t2 double = zeros(size(X, 1), 1)
 end
-% Calculate distances according to the PCA model in pcamodel struct
+clicktoggle = options.click;
+pcx = options.pcx;
+pcy = options.pcy;
+obstag = options.obstag;
+steps_spe = options.steps_spe;
+steps_t2 = options.steps_t2;
+
+% Project the data onto the PCA model in pcamodel struct
 pcaout = pcame(X, pcamodel);
 T2 = pcaout.T2;
 SPE = pcaout.SPE;
@@ -196,26 +210,26 @@ end
         
         % Value of SPE
         subplot('Position', [0.0700, 0.1100, 0.0500, 0.25]),
-        barwithucl(SPE, iobs, pcamodel.limspe, '{\it SPE}', ...
-            '\fontsize{8}Obs.Index', '{\it SPE_i}');
+        barwithucl(SPE, iobs, pcamodel.limspe, 'title','{\it SPE}', ...
+            'xlabel','\fontsize{8}Obs.Index', 'ylabel', '{\it SPE_i}');
         
         % Contribution to SPE (error)
         subplot('Position', [0.17, 0.1100, 0.35, 0.25]),
-        custombar(pcaout.E, iobs, 'Contributions to {\it SPE}', ...
-            '\fontsize{9}Variables');
+        custombar(pcaout.E, iobs, 'title', 'Contributions to {\it SPE}', ...
+            'xlabel', '\fontsize{9}Variables');
         
         % Value of Hotelling's T^2
         subplot('Position', [0.6, 0.1100, 0.0500, 0.25]),
         aa = gca;
         aa.Position(1) = 0.6;
         aa.Position(3) = 0.05;
-        barwithucl(T2, iobs, pcamodel.limt2, 'Hotelling-{\itT^2}', ...
-            '\fontsize{8}Obs.Index', '{\it T^2_i}');
+        barwithucl(T2, iobs, pcamodel.limt2, 'title', 'Hotelling-{\itT^2}', ...
+            'xlabel', '\fontsize{8}Obs.Index', 'ylabel', '{\it T^2_i}');
         
         % Contribution to Hotelling's T2
         subplot('Position', [0.7, 0.1100, 0.25, 0.25]),
-        ct2 = custombar(pcaout.T2cont, iobs, 'Contributions to {\itT^2_A}', ...
-            '\fontsize{9}PCs');
+        ct2 = custombar(pcaout.T2cont, iobs, 'title', 'Contributions to {\itT^2_A}', ...
+            'xlabel', '\fontsize{9}PCs');
         ct2.YLim(1) = 0;
     end
 end

@@ -1,5 +1,5 @@
-function scoreplot(X, pcamodel, clicktoggle, pcx, pcy, obstag, steps_spe, steps_t2)
-% Statistically Controlled OUTliERs
+function scoreplot(X, pcamodel, options)
+% Statistically Controlled OUTliers
 % A. Gonzalez Cebrian, A. Folch-Fortuny, F. Arteaga and A. Ferrer
 % Copyright (C) 2020 A. Gonzalez Cebrian, A. Folch-Fortuny and F. Arteaga
 %
@@ -16,7 +16,10 @@ function scoreplot(X, pcamodel, clicktoggle, pcx, pcy, obstag, steps_spe, steps_
 % You should have received a copy of the GNU General Public License
 % along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %
+% DESCRIPTION
 %
+% Returns the score plot according to the input arguments.
+% 
 % INPUTS
 %
 % X: data matrix with observations to be displayed in the distance plot.
@@ -32,18 +35,23 @@ function scoreplot(X, pcamodel, clicktoggle, pcx, pcy, obstag, steps_spe, steps_
 %
 % OUTPUTS
 %
-% T: matrix with the coordinates of each observation in the score plot.
-% ax0: handle with the graphical object containing the score plot.
+% (none)
 arguments
     X double
     pcamodel struct
-    clicktoggle string = 'on'
-    pcx double = 1
-    pcy double = 2
-    obstag double = zeros(size(X, 1), 1)
-    steps_spe double = zeros(size(X, 1), 1);
-    steps_t2 double = zeros(size(X, 1), 1);
+    options.clicktoggle string {mustBeMember(options.clicktoggle, ["on", "off"])} = 'on'
+    options.pcx double = 1
+    options.pcy double = 2
+    options.obstag double = zeros(size(X, 1), 1)
+    options.steps_spe double = zeros(size(X, 1), 1)
+    options.steps_t2 double = zeros(size(X, 1), 1)
 end
+clicktoggle = options.clicktoggle;
+pcx = options.pcx;
+pcy = options.pcy;
+obstag = options.obstag;
+steps_spe = options.steps_spe;
+steps_t2 = options.steps_t2;
 %% Calculate the scores according to the PCA model in pcamodel struct
 pcaout = pcame(X, pcamodel);
 T = pcaout.T;

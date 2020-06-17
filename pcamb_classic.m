@@ -1,5 +1,5 @@
 function [pcamodel] = pcamb_classic(X, ncomp, alpha, prepro)
-% Statistically Controlled OUTliERs 
+% Statistically Controlled OUTliers 
 % A. Gonzalez Cebrian, A. Folch-Fortuny, F. Arteaga and A. Ferrer
 % Copyright (C) 2020 A. Gonzalez Cebrian, A. Folch-Fortuny and F. Arteaga
 % 
@@ -16,16 +16,20 @@ function [pcamodel] = pcamb_classic(X, ncomp, alpha, prepro)
 % You should have received a copy of the GNU General Public License
 % along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %
+% DESCRIPTION
+%
+% Performs PCA Model Building using the data in X using the SVD approach.
 %
 % INPUTS
 %
-% X: data matrix of dimensions NxK with observations used for the PCA-MB
+% X: double matrix of dimensions NxK with observations used for the PCA-MB.
 % ncomp: integer indicating the number of Principal Components of the
 %    model.
 % alpha (optional): value of the Type I risk assumed for the Upper Control
 %   Limits (UCL) calculation. Default value set to alpha = 0.05.
 % prepro (optional): string indicating preprocessing applied to X, its
-%   possible values are 'cent' and 'autosc'. Default value set to 'autosc'.
+%   possible values are 'cent', 'autosc' or 'none'. Default value set to 
+%   'none'.
 %
 % OUTPUTS
 %
@@ -45,7 +49,14 @@ function [pcamodel] = pcamb_classic(X, ncomp, alpha, prepro)
 %     pcamodel.S = covariance matrix of observations used in the PCA-MB.
 %     pcamodel.limits_t = control limits for the scores with a confidence
 %       level (1-alpha)x100 % 
-%% PCA Model Building
+%
+arguments
+    X double
+    ncomp double {mustBeInRangeSize(ncomp,X,2)}
+    alpha double {mustBeInRange(alpha, [0,1])} = 0.05
+    prepro string {mustBeMember(prepro, ["cent", "autosc", "none"])} = "none"
+end
+% PCA Model Building
 m = mean(X);
 s = std(X);
 n = size(X, 1);
@@ -53,6 +64,8 @@ if strcmp(prepro, 'cent')
     Xaux = X - m;
 elseif strcmp(prepro, 'autosc')
     Xaux = (X - m) ./ repmat(s, n, 1);
+elseif strcmp(prepro, 'none')
+    Xaux = X;
 end
 [~, D, V] = svd(Xaux);
 P = V(:, 1:ncomp);
@@ -104,4 +117,17 @@ pcamodel.alpha = alpha;
 pcamodel.n = n;
 pcamodel.S = cov(X);
 pcamodel.limits_t = limits_t;
+end
+
+function mustBeInRange(arg,b)
+    if (arg < b(1)) || (arg > b(2))
+        error(['Value assigned to Data is not in range ',...
+            num2str(b(1)),'...',num2str(b(2))])
+    end
+end
+function mustBeInRangeSize(arg,B,dimB)
+    if (arg < 2) || (arg > size(B,dimB))
+        error(['Value assigned to Data is not in range ',...
+            num2str(2),'...',num2str(size(B,dimB))])
+    end
 end

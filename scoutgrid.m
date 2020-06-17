@@ -1,5 +1,5 @@
-function [outscout, SPE_0, T2_0] = scoutgrid(X, pcamodel, T2_M, SPE_M, nstepsspe, nstepst2, gspe, gt2)
-% Statistically Controlled OUTliERs
+function [outscout, SPE_0, T2_0] = scoutgrid(X, pcamodel, T2target, SPEtarget, nstepsspe, nstepst2, gspe, gt2)
+% Statistically Controlled OUTliers
 % A. Gonzalez Cebrian, A. Folch-Fortuny, F. Arteaga and A. Ferrer
 % Copyright (C) 2020 A. Gonzalez Cebrian, A. Folch-Fortuny and F. Arteaga
 %
@@ -16,6 +16,10 @@ function [outscout, SPE_0, T2_0] = scoutgrid(X, pcamodel, T2_M, SPE_M, nstepsspe
 % You should have received a copy of the GNU General Public License
 % along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %
+% DESCRIPTION
+%
+% Performs grid-wise SCOUTing on the observations of X according to the 
+% provided input parameters.
 %
 % INPUTS
 %
@@ -47,15 +51,24 @@ function [outscout, SPE_0, T2_0] = scoutgrid(X, pcamodel, T2_M, SPE_M, nstepsspe
 %           obsN stepM
 %   - T2: column vector with the T^2 values of the observations in X.
 %   - SPE: column vector with the SPE values of the observations in X.
-%   if mode = 'steps'
-%       - step: column vector with the intermediate step between {SPE,T2}0 and
-%           {SPE, T2}M.
-%   if mode = 'grid'
-%       - step_spe: column vector indicating the step between SPE0 and SPEM.
-%       - step_t2: column vector indicating the step between T20 and T2M.
+%   - tag: column vector indicating if the observation belongs to the
+%   reference data set (0) or to the new generated nada (1).
+%   - step_spe: column vector indicating the step between SPE0 and SPEM.
+%   - step_t2: column vector indicating the step between T20 and T2M.
 % SPE_0: vector with the initial SPE values.
 % T2_0: vector with the initial Hotelling's T^2 values.
-%%
+
+arguments
+    X double
+    pcamodel struct
+    T2target double
+    SPEtarget double
+    nstepsspe double {mustBeInteger}
+    nstepst2 double {mustBeInteger}
+    gspe double = 1
+    gt2 double = 1
+end
+
 n = size(X, 1);
 P = pcamodel.P;
 [pcaout] = pcame(X, pcamodel);
@@ -64,16 +77,16 @@ T2_0 = pcaout.T2;
 SPE_0 = pcaout.SPE;
 % When the target value is not specified, the target value will be the
 % initial value of the statistic (it will not be changed)
-if strcmp(T2_M,'none')
-    T2_M = T2_0;
+if strcmp(T2target,'none')
+    T2target = T2_0;
 end
-if strcmp(SPE_M,'none')
-    SPE_M = SPE_0;
+if strcmp(SPEtarget,'none')
+    SPEtarget = SPE_0;
 end
 factor_spe = diag(([1:nstepsspe]/nstepsspe).^gspe);
 factor_t2 = diag(([1:nstepst2]/nstepst2).^gt2);
-difmat_spe = repmat(SPE_M - SPE_0, 1, nstepsspe);
-difmat_t2 = repmat(T2_M - T2_0, 1, nstepst2);
+difmat_spe = repmat(SPEtarget - SPE_0, 1, nstepsspe);
+difmat_t2 = repmat(T2target - T2_0, 1, nstepst2);
 steps_spe = SPE_0 + difmat_spe * factor_spe;
 steps_t2 = T2_0 + difmat_t2 * factor_t2;
 

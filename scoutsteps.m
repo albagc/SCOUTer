@@ -1,5 +1,5 @@
-function [outscout, SPE_0, T2_0] = scoutsteps(X, pcamodel, T2_M, SPE_M, nsteps, gspe, gt2)
-% Statistically Controlled OUTliERs
+function [outscout, SPE_0, T2_0] = scoutsteps(X, pcamodel, T2target, SPEtarget, nsteps, gspe, gt2)
+% Statistically Controlled OUTliers
 % A. Gonzalez Cebrian, A. Folch-Fortuny, F. Arteaga and A. Ferrer
 % Copyright (C) 2020 A. Gonzalez Cebrian, A. Folch-Fortuny and F. Arteaga
 %
@@ -16,6 +16,10 @@ function [outscout, SPE_0, T2_0] = scoutsteps(X, pcamodel, T2_M, SPE_M, nsteps, 
 % You should have received a copy of the GNU General Public License
 % along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %
+% DESCRIPTION
+%
+% Performs step-wise SCOUTing on the observations of X according to the 
+% provided input parameters.
 %
 % INPUTS
 %
@@ -47,15 +51,23 @@ function [outscout, SPE_0, T2_0] = scoutsteps(X, pcamodel, T2_M, SPE_M, nsteps, 
 %           obsN stepM
 %   - T2: column vector with the T^2 values of the observations in X.
 %   - SPE: column vector with the SPE values of the observations in X.
-%   if mode = 'steps'
-%       - step: column vector with the intermediate step between {SPE,T2}0 and
-%           {SPE, T2}M.
-%   if mode = 'grid'
-%       - step_spe: column vector indicating the step between SPE0 and SPEM.
-%       - step_t2: column vector indicating the step between T20 and T2M.
+%   - tag: column vector indicating if the observation belongs to the
+%   reference data set (0) or to the new generated nada (1).
+%   - step_spe: column vector indicating the step between SPE0 and SPEM.
+%   - step_t2: column vector indicating the step between T20 and T2M.
 % SPE_0: vector with the initial SPE values.
 % T2_0: vector with the initial Hotelling's T^2 values.
-%%
+
+arguments
+    X double
+    pcamodel struct
+    T2target 
+    SPEtarget 
+    nsteps double {mustBeInteger}
+    gspe double = 1
+    gt2 double = 1
+end
+
 n = size(X, 1);
 P = pcamodel.P;
 [pcaout] = pcame(X, pcamodel);
@@ -64,16 +76,16 @@ T2_0 = pcaout.T2;
 SPE_0 = pcaout.SPE;
 % When the target value is not specified, the target value will be the
 % initial value of the statistic (it will not be changed)
-if strcmp(T2_M,'none')
-    T2_M = T2_0;
+if strcmp(T2target,'none')
+    T2target = T2_0;
 end
-if strcmp(SPE_M,'none')
-    SPE_M = SPE_0;
+if strcmp(SPEtarget,'none')
+    SPEtarget = SPE_0;
 end
 factor_spe = diag(((1:nsteps)/nsteps).^gspe);
 factor_t2 = diag(((1:nsteps)/nsteps).^gt2);
-steps_spe = SPE_0 + repmat(SPE_M - SPE_0, 1, nsteps) * factor_spe;
-steps_t2 = T2_0 + repmat(T2_M - T2_0, 1, nsteps) * factor_t2;
+steps_spe = SPE_0 + repmat(SPEtarget - SPE_0, 1, nsteps) * factor_spe;
+steps_t2 = T2_0 + repmat(T2target - T2_0, 1, nsteps) * factor_t2;
 Xout = [];
 for k = 1:size(steps_spe,2)
     spe_step = steps_spe(:, k);

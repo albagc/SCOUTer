@@ -16,22 +16,24 @@ function distplotsimple(T2, SPE, limt2, limspe, alpha , obstag)
 % You should have received a copy of the GNU General Public License
 % along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %
+% DESCRIPTION
+%
+% Returns the distance plot.
 %
 % INPUTS
 %
-% X: data matrix with observations to be displayed in the distance plot.
-% pcamodel: struct with the information of the PCA model.
-% obstag (optional): column vector of integers indicating the group of each
-%   observation. Default value set to zeros(size(X,1),1).
-% inter (optional): string indicating the status of the plot interactivity.
-%   Default value set to 'on'.
-% scoreopt (optional): struct indicating the PCs whose scores will be
-%   used in the score plot. Default values are scoreopt.pc1 = 1 and
-%   scoreopt.pc2 = 2;
+% T2: double input with the Hotelling's T^2 (T^2) statistic vector.
+% SPE: double input with the Squared Prediction Error (SPE) vector.
+% limt2: double input with the Upper Control Limit of the T^2.
+% limspe: double input with the Upper Control Limit of the SPE.
+% alpha (optional): double input with the Type I error assumed for the
+%   UCLs. Default set to 0.05.
+% obstag (optional): double vector indicating the tag (0 for reference and
+%   1 for new) of the observations. Default set to zeros(size(T2));
 %
 % OUTPUTS
 %
-% Figure with distance plot.
+% (none)
 arguments
     T2 double
     SPE double
@@ -40,21 +42,19 @@ arguments
     alpha double = 0.05;
     obstag double = zeros(size(T2));
 end
-%% Calculate the scores according to the PCA model in pcamodel struct
-n = length(T2);
-
+% Set axis limits
 a = 1.25 * max([T2; limt2]);
 b = 1.25 * max([SPE; limspe]);
 conflev = (1 - alpha) * 100;
 
-% Upper Control Limits
+% Plot UCLs
 plot(linspace(0, a, 100), limspe * ones(100, 1), 'r--', 'linewidth', ...
     1.2, 'HandleVisibility', 'off');
 hold on
 plot(limt2 * ones(100, 1), linspace(0, b, 100), 'r--', 'linewidth', ...
     1.2, 'HandleVisibility', 'off');
 
-% Distance plot
+% Plot observations
 markserie = {'o', '^'};
 nameserie = {'Obs.ref', 'Obs.new'};
 userie = unique(obstag);

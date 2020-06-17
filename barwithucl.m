@@ -1,4 +1,4 @@
-function [axv] = barwithucl(x, iobs, ucl, plotname, xlabelname, ylabelname)
+function [axobj] = barwithucl(x, iobs, ucl, labeloptions)
 % Statistically Controlled OUTlIERs
 % A. Gonzalez Cebrian, A. Folch-Fortuny, F. Arteaga and A. Ferrer
 % Copyright (C) 2020 A. Gonzalez Cebrian, A. Folch-Fortuny and F. Arteaga
@@ -19,7 +19,7 @@ function [axv] = barwithucl(x, iobs, ucl, plotname, xlabelname, ylabelname)
 % INPUTS
 %
 % x: vector with the values of the statistic.
-% ibos: index of the observations whose value will be displayed.
+% iobs: index of the observations whose value will be displayed.
 % ucl: upper control limit for the value of the statistic.
 % plotname (optional): string with the title of the plot.
 % xlabelname (optional): string with the x-axis label. 
@@ -27,26 +27,37 @@ function [axv] = barwithucl(x, iobs, ucl, plotname, xlabelname, ylabelname)
 %
 % OUTPUTS
 %
-% axv: axis of the bar plot
+% axobj: parent axes of the bar plot
 arguments
     x double
-    iobs double
-    ucl double
-    plotname string = "";
-    xlabelname string = "";
-    ylabelname string = "";
+    iobs (1,1) {mustBeInteger, mustBeInRangeLength(iobs, x)}
+    ucl (1,1) double = nan
+    labeloptions.title (1,1) string = ""
+    labeloptions.xlabel (1,1) string = ""
+    labeloptions.ylabel (1,1) string = ""
 end
-b1_1 = bar(x(iobs), 'b', 'EdgeColor', 'none'); hold on
-axv = ancestor(b1_1, 'axes');
+plotname = labeloptions.title;
+xlabelname = labeloptions.xlabel;
+ylabelname = labeloptions.ylabel;
+barobj = bar(x(iobs), 'b', 'EdgeColor', 'none'); hold on
+axobj = ancestor(barobj, 'axes');
 b1xlim = xlim;
-plot(axv, linspace(b1xlim(1), b1xlim(2), 50), ucl * ones(50, 1), ...
+plot(axobj, linspace(b1xlim(1), b1xlim(2), 50), ucl * ones(50, 1), ...
     'r--', 'linewidth', 1.2); hold off
-axv.XGrid = 'off'; 
-axv.YGrid = 'on';
-axv.HitTest  = 'off';
+axobj.XGrid = 'off'; 
+axobj.YGrid = 'on';
+axobj.HitTest  = 'off';
 title(plotname), 
 xticklabels(strcat('obs.', string(iobs))),
 xlabel(xlabelname),
 ylabel(ylabelname),
 ylim([0, 1.1*max(x)])
+end
+
+% Custom validation function
+function mustBeInRangeLength(arg,b)
+    if (arg < 1) || (arg > length(b))
+        error(['Value assigned to Data is not in range ',...
+            num2str(1),'...',num2str(length(b))])
+    end
 end

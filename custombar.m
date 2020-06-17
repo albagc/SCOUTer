@@ -1,4 +1,4 @@
-function [axv] = custombar(X, iobs, plotname, xlabelname, ylabelname)
+function [axobj] = custombar(X, iobs, labeloptions)
 % Statistically Controlled OUTlIERs
 % A. Gonzalez Cebrian, A. Folch-Fortuny, F. Arteaga and A. Ferrer
 % Copyright (C) 2020 A. Gonzalez Cebrian, A. Folch-Fortuny and F. Arteaga
@@ -18,30 +18,42 @@ function [axv] = custombar(X, iobs, plotname, xlabelname, ylabelname)
 %
 % INPUTS
 %
-% statvec: matrix with values to be displayed.
-% ibos: index of the observations whose values will be displayed.
-% plotname: string with the title that will be displayed on the plot.
-% xlabelname: string with the label for the x-axis.
+% X: matrix with observations as row vectors.
+% iobs: index of the observations whose value will be displayed.
+% plotname (optional): string with the title of the plot.
+% xlabelname (optional): string with the x-axis label. 
+% ylabelname (optional): string with the y-axis label. 
 %
 % OUTPUTS
 %
-% axv: Plots the values with the upper control limit of the statistic
+% axobj: parent axes of the bar plot
 arguments
     X double
-    iobs double
-    plotname string = "";
-    xlabelname string = "";
-    ylabelname string = "";
+    iobs double {mustBeInteger, mustBeInRangeSize(iobs,X,1)}
+    labeloptions.title (1,1) string = ""
+    labeloptions.xlabel (1,1) string = ""
+    labeloptions.ylabel (1,1) string = ""
 end
-b1 = bar(X(iobs,:), 'b', 'EdgeColor', 'none', 'HandleVisibility', 'off');
-axv = ancestor(b1, 'axes');
-axv.XGrid = 'off'; 
-axv.YGrid = 'on';
-axv.HitTest  = 'off';
-axv.FontSize = 9;
+plotname = labeloptions.title;
+xlabelname = labeloptions.xlabel;
+ylabelname = labeloptions.ylabel;
+barobj = bar(X(iobs,:), 'b', 'EdgeColor', 'none', 'HandleVisibility', 'off');
+axobj = ancestor(barobj, 'axes');
+axobj.XGrid = 'off'; 
+axobj.YGrid = 'on';
+axobj.HitTest  = 'off';
+axobj.FontSize = 9;
 title(plotname)
 y1max = max(max(abs(X)));
 ylim([-1.1*y1max, 1.1*y1max])
 xlabel(xlabelname)
 ylabel(ylabelname)
+end
+% Custom validation function
+
+function mustBeInRangeSize(arg,B,dimB)
+    if (arg < 1) || (arg > size(B,dimB))
+        error(['Value assigned to Data is not in range ',...
+            num2str(2),'...',num2str(size(B,dimB))])
+    end
 end

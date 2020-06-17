@@ -1,5 +1,5 @@
-function distplot(X, pcamodel, clicktoggle, obstag, steps_spe, steps_t2)
-% Statistically Controlled OUTliERs
+function distplot(X, pcamodel, options)
+% Statistically Controlled OUTliers
 % A. Gonzalez Cebrian, A. Folch-Fortuny, F. Arteaga and A. Ferrer
 % Copyright (C) 2020 A. Gonzalez Cebrian, A. Folch-Fortuny and F. Arteaga
 %
@@ -16,32 +16,40 @@ function distplot(X, pcamodel, clicktoggle, obstag, steps_spe, steps_t2)
 % You should have received a copy of the GNU General Public License
 % along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %
+% DESCRIPTION
 %
+% Returns the distance plot according to the input arguments.
+% 
 % INPUTS
 %
 % X: data matrix with observations to be displayed in the distance plot.
 % pcamodel: struct with the information of the PCA model.
+% clicktoggle(optional): string to control interactive plot options with
+%   values "on" or "off". Default set to "on". 
 % obstag (optional): column vector of integers indicating the group of each
 %   observation. Default value set to zeros(size(X,1),1).
-% inter (optional): string indicating the status of the plot interactivity.
+% steps_spe (optional): column vector of integers indicating the SPE step 
+%   of each observation. Default value set to zeros(size(X,1),1).
+% steps_t2 (optional): column vector of integers indicating the T^2 step 
+%   of each observation. Default value set to zeros(size(X,1),1).
 % Default value set to 'on'.
 %
-% OUTPUTS
+% OTPUTS
 %
-% SPE: column vector with the Squared Prediction Error for each observation
-% in X.
-% T2: column vector with the Hotelling's T^2 value for each observation
-% in X.
-% ax0: handle with the graphical object containing the distance plot.
-
+% (none) returns the distance plot.
 arguments
     X double
     pcamodel struct
-    clicktoggle string = 'on';
-    obstag double = zeros(size(X, 1), 1);
-    steps_spe double = zeros(size(X, 1), 1);
-    steps_t2 double = zeros(size(X, 1), 1);
+    options.clicktoggle string {mustBeMember(options.clicktoggle, ["on", "off"])} = 'on'
+    options.obstag double = zeros(size(X, 1), 1)
+    options.steps_spe double = zeros(size(X, 1), 1)
+    options.steps_t2 double = zeros(size(X, 1), 1)
 end
+clicktoggle = options.clicktoggle;
+obstag = options.obstag;
+steps_spe = options.steps_spe;
+steps_t2 = options.steps_t2;
+
 % Calculate distances according to the PCA model in pcamodel struct
 pcaout = pcame(X, pcamodel);
 T2 = pcaout.T2;
@@ -73,7 +81,7 @@ else
 end
 
 % Function being executed when the user clicks a point in the distance plot
-    function mytestcallback(src, ~, t2vec, spevec, errmat, t2mat, ax0)
+    function mytestcallback(~, ~, t2vec, spevec, errmat, t2mat, ax0)
         delete(spoint)
         xpt = get(ax0, 'CurrentPoint');
         dist2 = sum((xpt(1,1:2) - [t2vec,spevec]) .^ 2, 2);

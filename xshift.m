@@ -16,6 +16,10 @@ function [Xnew] = xshift(X, P, a, b)
 % You should have received a copy of the GNU General Public License
 % along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %
+% DESCRIPTION
+%
+% Performs a shift to each row in X, increasing by factors a and b the
+% distance of the observations according to the PCA model expressed in P.
 %
 % INPUTS
 %
@@ -29,9 +33,16 @@ function [Xnew] = xshift(X, P, a, b)
 
 % OUTPUTS
 %
-% Xnew: data matrix with each observation 
+% Xnew: data matrix with each observation .
 % %
-%%
+
+arguments
+    X double
+    P double
+    a double {LengthMatchSize(a,X,1)}
+    b double {LengthMatchSize(b,X,1)}
+end
+
 I = eye(size(P, 1));
 Xnew = nan(size(X));
 
@@ -40,4 +51,12 @@ for ni = 1:size(X, 1)
         * (P * P')));
 end
 
+end
+%
+function LengthMatchSize(arg,B,dimB)
+    if (length(arg) ~= size(B,dimB))
+        error(['Factor - Num.obs dimension mismatch: ',...
+            'numel(factor) is' num2str(length(arg)),'and X has',...
+            num2str(size(B,dimB)), 'elements'])
+    end
 end

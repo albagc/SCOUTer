@@ -1,5 +1,5 @@
 function scoreplotsimple(T, pcx, pcy, obstag, alpha, varT)
-% Statistically Controlled OUTliERs
+% Statistically Controlled OUTliers
 % A. Gonzalez Cebrian, A. Folch-Fortuny, F. Arteaga and A. Ferrer
 % Copyright (C) 2020 A. Gonzalez Cebrian, A. Folch-Fortuny and F. Arteaga
 %
@@ -16,6 +16,9 @@ function scoreplotsimple(T, pcx, pcy, obstag, alpha, varT)
 % You should have received a copy of the GNU General Public License
 % along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %
+% DESCRIPTION
+%
+% Returns the score plot.
 %
 % INPUTS
 %
@@ -31,7 +34,7 @@ function scoreplotsimple(T, pcx, pcy, obstag, alpha, varT)
 %
 % OUTPUTS
 %
-% Figure with score plot 
+% (none)  
 arguments
     T double
     pcx double = 1;

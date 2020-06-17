@@ -16,11 +16,19 @@ function [pcaout] = pcame(X, pcamodel)
 % You should have received a copy of the GNU General Public License
 % along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %
+% DESCRIPTION
+%
+% Performs PCA Model Exploitation to the data in X using the PCA model
+% information stored in the pcamodel struct.
 %
 % INPUTS
 %
 % X: NxM matrix with observations to be displayed in the distance plot.
-% pcamodel: struct with the information of the PCA model.
+% pcamodel: struct with the information of the PCA model, at least with
+%   fields m (mean vector, 1xM), s (standard deviation vector), 1xM, 
+%   P (loadings MxNcomp),
+%   prepro (string with preprocessing), lambda (score variances vector),
+%   ncomp (number of PCs).
 %
 % OUTPUTS
 %
@@ -32,7 +40,11 @@ function [pcaout] = pcame(X, pcamodel)
 %   - SPE: Squared Prediction Error vector.
 %   - T2: Hotelling's T^2 vector.
 %   - T2cont: Contributions for each observation and PC to the T^2.
-%% Calculate distances according to the PCA model in pcamodel struct
+arguments
+    X double
+    pcamodel struct
+end
+% Project the data onto the PCA model in pcamodel struct
 n = size(X,1);
 switch pcamodel.prepro
     case 'cent'
