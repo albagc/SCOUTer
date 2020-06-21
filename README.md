@@ -12,5 +12,7 @@ obtain *all* types of outliers.
  
 Control your simulations with SCOUTer in an *easy and interactive* way.
 
-Type: 'help <function_name>' in matlab command window to get more information about <function_name>.m.
-Check MatlabDocu.pdf with all the documentation about the functions in SCOUTer Matlab version.
+Type: 
+'help <function_name>' 
+in Matlab command window to get more information about <function_name>.m.
+Check _MatlabDocu.pdf_ with all the documentation about the functions in SCOUTer Matlab version.
