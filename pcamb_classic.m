@@ -16,40 +16,38 @@ function [pcamodel] = pcamb_classic(X, ncomp, alpha, prepro)
 % You should have received a copy of the GNU General Public License
 % along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %
-% DESCRIPTION
-%
+%% DESCRIPTION 
 % Performs PCA Model Building using the data in X using the SVD approach.
 %
-% INPUTS
+%% INPUTS
+% X: double matrix of dimensions _NxK_ with observations used for the 
+%   PCA-MB.
+% ncomp: integer indicating the number of Principal Components of the 
+%   model.
+% alpha (optional): value of the Type I risk assumed for the Upper 
+%   Control Limits (UCL) calculation. Default value set to alpha = 0.05.
+% prepro (optional): string indicating preprocessing applied to X, its 
+%   possible values are 'cent', 'autosc' or 'none'. Default value set
+%   to 'none'.
 %
-% X: double matrix of dimensions NxK with observations used for the PCA-MB.
-% ncomp: integer indicating the number of Principal Components of the
-%    model.
-% alpha (optional): value of the Type I risk assumed for the Upper Control
-%   Limits (UCL) calculation. Default value set to alpha = 0.05.
-% prepro (optional): string indicating preprocessing applied to X, its
-%   possible values are 'cent', 'autosc' or 'none'. Default value set to 
-%   'none'.
-%
-% OUTPUTS
-%
-% pcamodel: struct returning the parameters of the PCA model fit with data
-%   in X. 
-%     pcamodel.m = mean vector (1 x K).
-%     pcamodel.s = mean vector (1 x K).
-%     pcamodel.P = loading matrix (K x ncomp).
-%     pcamodel.Pfull = loading matrix (K x K).
-%     pcamodel.lambda = vector with variances of the scores (1 x ncomp).
-%     pcamodel.limspe = Upper Control Limit (for alpha value) for the SPE.
-%     pcamodel.limt2 = Upper Control Limit (for alpha value) for the T^2.
-%     pcamodel.prepro = string indicating preprocessing applied to X.
-%     pcamodel.ncomp = integer indicating the number of PCs of the model.
-%     pcamodel.alpha = value of the Type I risk assumed for the UCL.
-%     pcamodel.n = number of observations used in the PCA-MB.
-%     pcamodel.S = covariance matrix of observations used in the PCA-MB.
-%     pcamodel.limits_t = control limits for the scores with a confidence
-%       level (1-alpha)x100 % 
-%
+%% OUTPUTS
+% pcamodel : struct returning the parameters of the PCA model fit with 
+%   data in X. Fields:
+%   - m: mean vector (1 x K).
+%   - s: mean vector (1 x K).
+%   - P: loading matrix (K x ncomp).
+%   - Pfull: loading matrix (K x K).
+%   - lambda: vector with variances of the scores (1 x ncomp).
+%   - limspe: Upper Control Limit (for alpha value) for the SPE.
+%   - limt2: Upper Control Limit (for alpha value) for the T^2.
+%   - prepro: string indicating preprocessing applied to X.
+%   - ncomp: integer indicating the number of PCs of the model.
+%   - alpha: value of the Type I risk assumed for the UCL.
+%   - n: number of observations used in the PCA-MB.
+%   - S: covariance matrix of observations used in the PCA-MB.
+%   - limits_t: Control Limits for the scores with a confidence
+%       level (1- alpha)x100 % 
+%% Matlab Code 
 arguments
     X double
     ncomp double {mustBeInRangeSize(ncomp,X,2)}
@@ -82,7 +80,6 @@ if strcmp(prepro, 'cent')
 elseif strcmp(prepro, 'autosc')
     Xrec = (T * P') .* repmat(s, n, 1) + m;
 end
-%% Upper Control Limits ad a confidence level (1-alpha)x100 %
 % SPE upper control limit
 theta1 = sum(LambdaE(ncomp + 1 : end));
 theta2 = sum(LambdaE(ncomp + 1 : end) .^ 2);

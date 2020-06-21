@@ -16,11 +16,18 @@ function [axobj] = barwithucl(x, iobs, ucl, labeloptions)
 % You should have received a copy of the GNU General Public License
 % along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %
+% DESCRIPTION
+% 
+% Single bar plot with Upper Control Limis. Customized title and labels.
+% Y-Axis limits are fixed according to the range of the values in x.
+%
 % INPUTS
 %
 % x: vector with the values of the statistic.
 % iobs: index of the observations whose value will be displayed.
 % ucl: upper control limit for the value of the statistic.
+% 
+% Name-Value pair input arguments:
 % plotname (optional): string with the title of the plot.
 % xlabelname (optional): string with the x-axis label. 
 % ylabelname (optional): string with the y-axis label. 

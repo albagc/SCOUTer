@@ -27,15 +27,11 @@ function [outscout, SPE_0, T2_0] = scoutsteps(X, pcamodel, T2target, SPEtarget, 
 % pcamodel: struct with the information of the PCA model.
 % T2target: Hotelling's T^2 target value for each observation in X.
 % SPEtarget: SPE target value for each observation in X.
-% optional Name-Value pair arguments:
-%   - mode: 'step' for simultaneous increment in SPE and T2, or 'grid' to
-%   generate datasets with all the combinations of SPEm and T2m. Default
-%   set to 'step'.
-%   - nsteps: integer indicating the number of steps from SPE_0 to SPE_M
+% nsteps: integer indicating the number of steps from SPE_0 to SPE_M
 %   (or T^2). Default set to 1.
-%   - gspe: gamma value tunning the linearity of the steps from SPE_0 to
+% gspe: gamma value tunning the linearity of the steps from SPE_0 to
 %   SPE_M. Default set to 1.
-%   - gt2: gamma value tunning the linearity of the steps from T20 to
+% gt2: gamma value tunning the linearity of the steps from T20 to
 %   T2_M. Default set to 1.
 %
 % OUTPUTS
@@ -49,12 +45,12 @@ function [outscout, SPE_0, T2_0] = scoutsteps(X, pcamodel, T2target, SPEtarget, 
 %           obs1 step2
 %           ...  ...
 %           obsN stepM
-%   - T2: column vector with the T^2 values of the observations in X.
-%   - SPE: column vector with the SPE values of the observations in X.
+%   - T2: column vector with the T^2 values of the shifted observations.
+%   - SPE: column vector with the SPE values of the shifted observations.
 %   - tag: column vector indicating if the observation belongs to the
 %   reference data set (0) or to the new generated nada (1).
-%   - step_spe: column vector indicating the step between SPE0 and SPEM.
-%   - step_t2: column vector indicating the step between T20 and T2M.
+%   - step_spe: column vector indicating the step between SPE_x and SPE_y.
+%   - step_t2: column vector indicating the step between T2_x and T2_y.
 % SPE_0: vector with the initial SPE values.
 % T2_0: vector with the initial Hotelling's T^2 values.
 

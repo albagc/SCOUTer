@@ -23,16 +23,22 @@ function [outscout, SPE_0, T2_0] = scout(X, pcamodel, mode, options)
 %
 % INPUTS
 %
-% X: data matrix with observations to be displayed in the distance plot.
+% X: matrix with observations to be shifted as row-vectors.
 % pcamodel: struct with the information of the PCA model.
-% mode: string with procedure to generate steps. 
-% T2y: Hotelling's T^2 target value for each observation in X.
-% SPEy: SPE target value for each observation in X.
-% nsteps (optional): integer with number of steps for the SPE and the T2.
-% nstepsspe (optional): integer with number of steps for the SPE.
-% nstepst2 (optional): integer with number of steps for the T2.
-% gt2 (optional): number with T2's speed parameter.
-% gspe (optional): number with SPE's speed parameter.
+% mode (optional): string with procedure to generate steps. 
+% 
+% Name-Value pair Input Arguments:
+% 'T2y': Hotelling's T^2 target value for each observation in X. If no value
+%   is provided, the T^2 value of the observation is set as target, i.e.: 
+%   the T^2 remains constant. 
+% 'SPEy': SPE target value for each observation in X. If no value
+%   is provided, the SPE value of the observation is set as target, i.e.: 
+%   the SPE remains constant. 
+% 'nsteps' (optional): integer with number of steps for the SPE and the T2.
+% 'nstepsspe' (optional): integer with number of steps for the SPE.
+% 'nstepst2' (optional): integer with number of steps for the T2.
+% 'gt2' (optional): number with T2's speed parameter.
+% 'gspe' (optional): number with SPE's speed parameter.
 %
 % OUTPUTS
 %

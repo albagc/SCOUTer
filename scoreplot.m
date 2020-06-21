@@ -19,19 +19,25 @@ function scoreplot(X, pcamodel, options)
 % DESCRIPTION
 %
 % Returns the score plot according to the input arguments.
-% 
+%
 % INPUTS
 %
 % X: data matrix with observations to be displayed in the distance plot.
 % pcamodel: struct with the information of the PCA model.
 % clicktoggle (optional): string indicating the status of the plot interactivity.
 %   Default value set to 'on'.
-% obstag (optional): vector of integers indicating the group of each
-%   observation. Default value set to zeros(size(X,1),1).
+%
+% Name - Value pair Input Arguments:
 % pcx (optional): integer with PC represented in the horizontal axis.
 %   Default value set to 1.
 % pcy (optional): integer with PC represented in the vertical axis.
 %   Default value set to 2.
+% obstag (optional): vector of integers indicating the group of each
+%   observation. Default value set to zeros(size(X,1),1).
+% steps_spe (optional): column vector of integers indicating the SPE step
+%   of each observation. Default value set to zeros(size(X,1),1).
+% steps_t2 (optional): column vector of integers indicating the T^2 step
+%   of each observation. Default value set to zeros(size(X,1),1).
 %
 % OUTPUTS
 %
@@ -52,39 +58,88 @@ pcy = options.pcy;
 obstag = options.obstag;
 steps_spe = options.steps_spe;
 steps_t2 = options.steps_t2;
-%% Calculate the scores according to the PCA model in pcamodel struct
+
+% Project the data onto the PCA model in pcamodel struct
 pcaout = pcame(X, pcamodel);
+T2 = pcaout.T2;
+SPE = pcaout.SPE;
 T = pcaout.T;
 
-if strcmp(clicktoggle, 'on')
-    subplot(4, 6, 1:12),
+switch clicktoggle
+    case 'off'
+        a1 = subplot(6, 6, 1:12);
+        scoreplotsimple(T, pcx, pcy, obstag, pcamodel.alpha)
+        spoint = scatter(0, 0, 25, 'Marker', 'o', ...
+            'MarkerFaceColor', 'none', 'MarkerEdgeColor', 'none', ...
+            'HandleVisibility', 'off');
+        delete(findall(gcf, 'type', 'annotation'))
+        annotation('textbox', [a1.Position(1), a1.Position(2) + a1.Position(4), 0.2, 0.05], ...
+            'String', strcat('Conf.Ellipse_{', string((1-pcamodel.alpha)*100), '%}'), ...
+            'BackgroundColor', 'none', 'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'left', 'FontSize', 7)
+        
+        legend('FontSize', 10, 'box', 'off', 'NumColumns', 1, ...
+            'Position', [0 0.4 1 0.05])
+        
+        annotation('textbox', [0.2, 0.35, 0.6, 0.05], 'String', ...
+            {'Select an observation from the plot above to display its SPE, its T^2 and its contributions:'}, ...
+            'FitBoxToText', 'on', 'BackgroundColor', 'w', 'HorizontalAlignment',...
+            'center', 'FontSize', 9, 'EdgeColor', 'none')
+        set(gcf, 'WindowButtonDownFcn', @onClickAction)
+        
+        fig = gcf;
+        fig.Units = 'Normalized';
+        fig.Position(3) = 0.5;
+        fig.Position(4) = 0.35;
+        
+        hBr = brush;
+        hBr.Enable = 'on';
+        hBr.Color = 'black';
+        hBr.ActionPostCallback = {@onBrushAction};
+        
+    case 'on'
+        
+        a1 = subplot(6, 6, 1:12);
+        scoreplotsimple(T, pcx, pcy, obstag, pcamodel.alpha)
+        spoint = scatter(0, 0, 25, 'Marker', 'o', ...
+            'MarkerFaceColor', 'none', 'MarkerEdgeColor', 'none', ...
+            'HandleVisibility', 'off');
+        delete(findall(gcf, 'type', 'annotation'))
+        annotation('textbox', [a1.Position(1), a1.Position(2) + a1.Position(4), 0.2, 0.05], ...
+            'String', strcat('Conf.Ellipse_{', string((1-pcamodel.alpha)*100), '%}'), ...
+            'BackgroundColor', 'none', 'EdgeColor', 'none', ...
+            'HorizontalAlignment', 'left', 'FontSize', 7)
+        
+        legend('FontSize', 9, 'box', 'off', 'NumColumns', 1, ...
+            'Position', [0 0.5 1 0.1])
+        
+        instr = annotation('textbox', [0.2, 0.45, 0.6, 0.05], 'String', ...
+            {'Select an observation from the plot above to display its SPE, its T^2 and its contributions:'}, ...
+            'FitBoxToText', 'on', 'BackgroundColor', 'w', ...
+            'HorizontalAlignment', 'center', 'FontSize', 9, ...
+            'EdgeColor', 'none');
+        
+        set(gcf, 'WindowButtonDownFcn', @onClickAction)
 end
-scoreplotsimple(T, pcx, pcy, obstag, pcamodel.alpha)
-spoint = scatter(0, 0, 25, 'Marker', 'o', ...
-    'MarkerFaceColor', 'none', 'MarkerEdgeColor', 'none', ...
-    'HandleVisibility', 'off');
-ax0 = gca;
+
 t1 = T(:, pcx);
 t2 = T(:, pcy);
 
-if strcmp(clicktoggle, 'on')
-    legend('FontSize', 10, 'box', 'off', 'NumColumns', 1, ...
-        'Position', [0 0.42 1 0.05])
-    annotation('textbox', [0.2, 0.35, 0.6, 0.05], 'String', ...
-        {'Please click on your observation of interest to display further information'},...
-        'FitBoxToText', 'on', 'BackgroundColor', 'w', 'HorizontalAlignment',...
-        'center', 'FontSize', 9, 'EdgeColor', 'none')
-    set(gcf,'WindowButtonDownFcn', {@mytestcallback, t1, t2, pcaout.E, ...
-        pcaout.T2cont, pcaout.SPE, pcaout.T2, pcamodel.limspe, ...
-        pcamodel.limt2, ax0})
-else
-    legend('FontSize', 10, 'box', 'off', 'NumColumns', 1, ...
-        'Location', 'southoutside')
-end
-% Function being executed when the user clicks a point in the distance plot
-    function mytestcallback(src, ~, t1, t2, errmat, t2mat, spevec, ...
-            t2vec, limspe, limT2, ax0)
+% Callback for brush selection
+    function onBrushAction(src, event)
         delete(spoint)
+        % Extract coordinates
+        iloc = find(event.Axes.Children.BrushData ~= 0);
+        spoint = scatter(a1, T2(iloc), SPE(iloc), 25, ...
+            'Marker', 'o', 'MarkerFaceColor', 'k', ...
+            'MarkerEdgeColor', 'k', 'HandleVisibility', 'off');
+        set(src, 'UserData', iloc)
+    end
+
+% Callback for click action
+    function onClickAction(~, ~)
+        delete(spoint)
+        ax0 = gca;
         xpt = get(ax0, 'CurrentPoint');
         dist2 = sum((xpt(1, 1:2) - [t1, t2]) .^ 2, 2);
         [~, iobs] = min(dist2);
@@ -101,33 +156,34 @@ end
             'MarkerEdgeColor', 'k', 'HandleVisibility', 'off');
         
         % Anotation
-        annotation('textbox', [0.1, 0.3, 0.8, 0.1], 'String', ...
+        annotation('textbox', [0.1, 0.45, 0.8, 0.075], 'String', ...
             {'Select an observation from the plot above to display its SPE, its T^2 and its contributions:', ...
             strcat('Selected observation (black dot):', {'  '}, ...
             'Row ID:', {' '}, string(nobsorig), {'         '}, ...
             'SPE step: ', {' '}, string(steps_spe_all(iobs)), {'         '},...
             'T^2 step: ', {' '}, string(steps_t2_all(iobs)))},...
-            'BackgroundColor', 'w', 'HorizontalAlignment', 'left', ...
+            'BackgroundColor', 'w', 'HorizontalAlignment', 'center', ...
             'FontSize', 9, 'EdgeColor', 'none', 'FitBoxToText', 'on')
         
         % Value of SPE
-        subplot(4, 6, 19),
-        barwithucl(spevec, iobs, limspe, '{\it SPE}', ...
-            '\fontsize{8}Obs.Index', '{\it SPE_i}');
+        subplot('Position', [0.0700, 0.1100, 0.0500, 0.25]),
+        barwithucl(SPE, iobs, pcamodel.limspe, 'title', '{\it SPE}', ...
+            'xlabel','\fontsize{8}Obs.Index', 'ylabel', '{\it SPE_i}');
         
         % Contribution to SPE (error)
-        subplot(4, 6, [20, 21]);
-        custombar(errmat, iobs, 'Contributions to {\it SPE}', ...
-            '\fontsize{9}Variables');
+        subplot('Position', [0.17, 0.1100, 0.35, 0.25]),
+        custombar(pcaout.E, iobs, 'title', 'Contributions to {\it SPE}', ...
+            'xlabel', '\fontsize{9}Variables');
         
         % Value of Hotelling's T^2
-        subplot(4, 6, 22),
-        barwithucl(t2vec, iobs, limT2, 'Hotelling-{\itT^2}', ...
-            '\fontsize{8}Obs.Index', '{\it T^2_i}');
+        subplot('Position', [0.6, 0.1100, 0.0500, 0.25]),
+        barwithucl(T2, iobs, pcamodel.limt2, 'title', 'Hotelling-{\itT^2}', ...
+            'xlabel', '\fontsize{8}Obs.Index', 'ylabel', '{\it T^2_i}');
         
         % Contribution to Hotelling's T2
-        subplot(4, 6, [23, 24]);
-        custombar(t2mat, iobs, 'Contributions to {\itT^2_A}', ...
-            '\fontsize{9}PCs');
+        subplot('Position', [0.7, 0.1100, 0.25, 0.25]),
+        ct2 = custombar(pcaout.T2cont, iobs, 'title', 'Contributions to {\itT^2_A}', ...
+            'xlabel', '\fontsize{9}PCs');
+        ct2.YLim(1) = 0;
     end
 end

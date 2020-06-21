@@ -19,9 +19,8 @@ function obscontribpanel(pcaout, limspe, limt2, iobs)
 % DESCRIPTION
 %
 % Information about Squared Prediction Error and Hotelling's T^2_A (T^2)
-% for an observation, i.e.:
-% information about the Mahalanobis distance of the observation on the PCA
-% model.
+% for an observation, i.e.: information about the Mahalanobis distance of
+% the observation on the PCA model.
 %
 % INPUTS
 %
@@ -40,8 +39,7 @@ function obscontribpanel(pcaout, limspe, limt2, iobs)
 %
 % OUTPUTS
 %
-% barobs: axis of the bar plot with the T^2 value.
-% barcont: axis of the bar plot with the contributions to the T^2.
+% (none) figure with 2 x 2 subplots layout
 arguments
     pcaout struct
     limspe (1,1) double

@@ -16,6 +16,11 @@ function [axobj] = custombar(X, iobs, labeloptions)
 % You should have received a copy of the GNU General Public License
 % along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %
+% DESCRIPTION
+% 
+% Bar plot with with customized title and labels. Y-Axis limits are fixed 
+% according to the range of the values in X.
+%
 % INPUTS
 %
 % X: matrix with observations as row vectors.

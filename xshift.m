@@ -33,9 +33,9 @@ function [Xnew] = xshift(X, P, a, b)
 
 % OUTPUTS
 %
-% Xnew: data matrix with each observation .
-% %
-
+% Xnew: data matrix with the same dimensions as X, with each observation 
+% shifted.
+%
 arguments
     X double
     P double

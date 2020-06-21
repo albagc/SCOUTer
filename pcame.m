@@ -16,30 +16,28 @@ function [pcaout] = pcame(X, pcamodel)
 % You should have received a copy of the GNU General Public License
 % along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %
-% DESCRIPTION
-%
+%% DESCRIPTION
 % Performs PCA Model Exploitation to the data in X using the PCA model
 % information stored in the pcamodel struct.
 %
-% INPUTS
-%
-% X: NxM matrix with observations to be displayed in the distance plot.
+%% INPUTS
+% X: double matrix of dimensions NxK with observations to be displayed in
+%   the distance plot.
 % pcamodel: struct with the information of the PCA model, at least with
-%   fields m (mean vector, 1xM), s (standard deviation vector), 1xM, 
-%   P (loadings MxNcomp),
-%   prepro (string with preprocessing), lambda (score variances vector),
-%   ncomp (number of PCs).
+%   fields m (mean vector), s (standard deviation vector), 
+%   P (loading matrix), prepro (string with preprocessing), lambda (score
+%   variances vector), ncomp (number of PCs).
 %
-% OUTPUTS
-%
-% pcaout: struct with fields containing the information from the
-%   observations in X in terms of the PCA model of pcamodel. With fields:
-%   - T: Scores matrix of dimensions NxK where K is the number of PCs.
-%   - E: Error matrix of dimensions NxM.
-%   - Xhat: Prediction of X with the PCA model, same dimensions of X (NxM).
-%   - SPE: Squared Prediction Error vector.
-%   - T2: Hotelling's T^2 vector.
-%   - T2cont: Contributions for each observation and PC to the T^2.
+%% OUTPUTS
+% pcaout: struct containing the information from the observations in X
+%   projected onto the PCA model of pcamodel. With fields:
+%   - T: Scores matrix of (N x Ncomp).
+%   - E: Error matrix of (N x K).
+%   - Xhat: Prediction of X with the PCA model (N x K).
+%   - SPE: Squared Prediction Error vector (N x 1).
+%   - T2: Hotelling's T^2 vector (N x 1).
+%   - T2cont: Contributions to the T^2 (N x Ncomp).
+%% Matlab Code
 arguments
     X double
     pcamodel struct

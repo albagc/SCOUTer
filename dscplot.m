@@ -25,6 +25,8 @@ function dscplot(X, pcamodel, options)
 %
 % X: data matrix with observations to be displayed in the distance plot.
 % pcamodel: struct with the information of the PCA model.
+%
+% Name - Value pair Input Arguments:
 % clicktoggle (optional): string to control interactive plot options with
 %   values "on" or "off". Default set to "on". 
 % pcx (optional): integer with the x-axis PC. Default set to 1.
@@ -98,8 +100,10 @@ switch clicktoggle
             'String', strcat('Conf.Ellipse_{', string((1-pcamodel.alpha)*100), '%}'), ...
             'BackgroundColor', 'none', 'EdgeColor', 'none', ...
             'HorizontalAlignment', 'left', 'FontSize', 7)
+        
         legend('FontSize', 9, 'box', 'off', 'NumColumns', 1, ...
             'Position', [0 0.02 1 0.1])
+        
         fig = gcf;
         fig.Units = 'Normalized';
         fig.Position(3) = 0.5;
@@ -115,7 +119,6 @@ switch clicktoggle
         a1 = subplot(6, 6, [1:3, 7:9]);
         distplotsimple(T2, SPE, pcamodel.limt2, pcamodel.limspe, ...
             pcamodel.alpha, obstag); hold on;
-        %         a1 = gca;
         spoint1 = scatter(T2(), SPE(), 25, 'Marker', 'o', ...
             'MarkerFaceColor', 'none', 'MarkerEdgeColor', 'none', ...
             'HandleVisibility', 'off');
@@ -126,7 +129,6 @@ switch clicktoggle
         t2 = T(:, pcy);
         a2 = subplot(6, 6, [4:6, 10:12]);
         scoreplotsimple(T, pcx, pcy, obstag, pcamodel.alpha); hold on;
-        %         a2 = gca;
         spoint2 = scatter(0, 0, 25, 'Marker', 'o', ...
             'MarkerFaceColor', 'none', 'MarkerEdgeColor', 'none', ...
             'HandleVisibility', 'off');
@@ -147,16 +149,16 @@ switch clicktoggle
         legend('FontSize', 9, 'box', 'off', 'NumColumns', 1, ...
             'Position', [0 0.55 1 0.1])
         
-        instr = annotation('textbox', [0.2, 0.5, 0.6, 0.05], 'String', ...
-            {'Please click on your observation of interest to display further information'},...
+        instr = annotation('textbox', [0.2, 0.45, 0.6, 0.075], 'String', ...
+            {'Select an observation from the plot above to display its contributions:'},...
             'FitBoxToText', 'on', 'BackgroundColor', 'w', ...
             'HorizontalAlignment', 'center', 'FontSize', 9, ...
             'EdgeColor', 'none');
         
-        set(gcf, 'WindowButtonDownFcn', @mytestcallback_ds)
+        set(gcf, 'WindowButtonDownFcn', @onClickAction)
 end
 
-% Callback for after the brush action has been completed
+% Callback for brush selection
     function onBrushAction(src, event)
         delete(spoint1), delete(spoint2)
         % Extract coordinates
@@ -171,8 +173,8 @@ end
         set(src, 'UserData', iloc)
     end
 
-% Function being executed when the user clicks a point in the distance plot
-    function mytestcallback_ds(~, ~)
+% Callback for click action
+    function onClickAction(~, ~)
         delete(spoint1), delete(spoint2)
         ax0 = gca;
         xpt = get(ax0, 'CurrentPoint');
@@ -199,14 +201,14 @@ end
             'HandleVisibility', 'off');
         
         % Anotation
-        instr = annotation('textbox', [0.07, 0.42, 0.8, 0.12], 'String', ...
+        instr = annotation('textbox', [0.1, 0.45, 0.8, 0.075], 'String', ...
             {'Select an observation from the plot above to display its SPE, its T^2 and its contributions:', ...
             strcat('Selected observation (black dot):', {'  '}, ...
             'Row ID:', {' '}, string(nobsorig), {'         '}, ...
             'SPE step: ', {' '}, string(steps_spe_all(iobs)), {'         '},...
             'T^2 step: ', {' '}, string(steps_t2_all(iobs)))},...
-            'BackgroundColor', 'w', 'HorizontalAlignment', 'left', ...
-            'FontSize', 9, 'EdgeColor', 'none', 'FitBoxToText', 'on');
+            'BackgroundColor', 'w', 'HorizontalAlignment', 'center', ...
+            'FontSize', 9, 'EdgeColor', 'none', 'FitBoxToText', 'off');
         
         % Value of SPE
         subplot('Position', [0.0700, 0.1100, 0.0500, 0.25]),
@@ -220,9 +222,6 @@ end
         
         % Value of Hotelling's T^2
         subplot('Position', [0.6, 0.1100, 0.0500, 0.25]),
-        aa = gca;
-        aa.Position(1) = 0.6;
-        aa.Position(3) = 0.05;
         barwithucl(T2, iobs, pcamodel.limt2, 'title', 'Hotelling-{\itT^2}', ...
             'xlabel', '\fontsize{8}Obs.Index', 'ylabel', '{\it T^2_i}');
         

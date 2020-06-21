@@ -23,20 +23,16 @@ function [outscout, SPE_0, T2_0] = scoutgrid(X, pcamodel, T2target, SPEtarget, n
 %
 % INPUTS
 %
-% X: data matrix with observations to be displayed in the distance plot.
+% X: matrix with observations to be shifted as row-vectors.
 % pcamodel: struct with the information of the PCA model.
-% T2_M: Hotelling's T^2 target value for each observation in X.
-% SPE_M: SPE target value for each observation in X.
-% optional Name-Value pair arguments:
-%   - mode: 'step' for simultaneous increment in SPE and T2, or 'grid' to
-%   generate datasets with all the combinations of SPEm and T2m. Default
-%   set to 'step'.
-%   - nsteps: integer indicating the number of steps from SPE_0 to SPE_M
-%   (or T^2). Default set to 1.
-%   - gspe: gamma value tunning the linearity of the steps from SPE_0 to
-%   SPE_M. Default set to 1.
-%   - gt2: gamma value tunning the linearity of the steps from T20 to
-%   T2_M. Default set to 1.
+% T2target: Hotelling's T^2 target value for each observation in X.
+% SPEtarget: SPE target value for each observation in X.
+% nstepsspe: integer indicating the number of steps from SPE_x to SPE_y.
+%   Default set to 1.
+% nstepst2: integer indicating the number of steps from T^2_x to T^2_y.
+%   Default set to 1.
+% gspe: number with SPE speed parameter. Default set to 1.
+% gt2: number with T2's speed parameter. Default set to 1.
 %
 % OUTPUTS
 %

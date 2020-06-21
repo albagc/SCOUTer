@@ -22,15 +22,17 @@ function scoreplotsimple(T, pcx, pcy, obstag, alpha, varT)
 %
 % INPUTS
 %
-% X: data matrix with observations to be displayed in the distance plot.
-% pcamodel: struct with the information of the PCA model.
-% obstag (optional): column vector of integers indicating the group of each
-%   observation. Default value set to zeros(size(X,1),1).
-% inter (optional): string indicating the status of the plot interactivity.
-%   Default value set to 'on'.
-% scoreopt (optional): struct indicating the PCs whose scores will be
-%   used in the score plot. Default values are scoreopt.pc1 = 1 and
-%   scoreopt.pc2 = 2;
+% T: data matrix with the scores to be displayed in the score plot.
+% pcx (optional): integer indicating the PC in the horizontal axis. Default
+%   value set to 1.
+% pcy (optional): integer indicating the PC in the vertical axis. Default
+%   value set to 2.
+% obstag (optional): double vector indicating the tag (0 for reference and
+%   1 for new) of the observations. Default set to zeros(size(T2));
+% alpha (optional): double input with the Type I error assumed for the
+%   UCLs. Default set to 0.05.
+% varT (optional): vector with the variances of the scores of the PCA
+%   model. Default set to var(T).
 %
 % OUTPUTS
 %

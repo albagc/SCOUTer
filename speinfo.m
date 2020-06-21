@@ -20,14 +20,13 @@ function [barobs, barcont] = speinfo(SPE, E, limspe, iobs)
 %
 % Information about Squared Prediction Error (SPE) for an observation, i.e.:
 % information about the distance of the observation to the PCA model 
-% model.
 %
 % INPUTS
 %
-% SPE: double vector with values of the SPE statistic.
-% E: double matrix with the contributions of each variable (columns) 
+% SPE: vector with values of the SPE statistic.
+% E: matrix with the contributions of each variable (columns) 
 %   for each observation (rows) to the SPE.
-% limspe: double with the value of the SPE Upper Control Limit 
+% limspe: value of the SPE Upper Control Limit 
 %   (with confidence level (1-alpha)*100 %).
 % iobs: integer with the index of the observation of interest.
 %
