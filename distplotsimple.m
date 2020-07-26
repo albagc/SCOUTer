@@ -26,7 +26,7 @@ function distplotsimple(T2, SPE, limt2, limspe, alpha , obstag)
 % SPE: double input with the Squared Prediction Error (SPE) vector.
 % limt2: double input with the Upper Control Limit of the T^2.
 % limspe: double input with the Upper Control Limit of the SPE.
-% alpha (optional): double input with the Type I error assumed for the
+% alpha (optional): input with the Type I error assumed for the
 %   UCLs. Default set to 0.05.
 % obstag (optional): double vector indicating the tag (0 for reference and
 %   1 for new) of the observations. Default set to zeros(size(T2));

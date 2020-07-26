@@ -25,7 +25,7 @@ function [axobj] = barwithucl(x, iobs, ucl, labeloptions)
 %
 % x: vector with the values of the statistic.
 % iobs: index of the observations whose value will be displayed.
-% ucl: upper control limit for the value of the statistic.
+% ucl: Upper Control Limit of the statistic.
 % 
 % Name-Value pair input arguments:
 % plotname (optional): string with the title of the plot.
