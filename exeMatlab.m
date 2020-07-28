@@ -16,6 +16,13 @@
 % along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %
 % DEMO SCRIPT reproducing results from JSS publication. 
+%% Matlab version adapted:
+my = strsplit(version('-date'),',');
+if str2double(my{2})<2019
+    addpath('rprev2019')
+else
+    addpath('rlater2019')
+end
 %% Load data and build a PCA model
 load exampleX
 pcamodel_ref = pcamb_classic(X, 2, 0.05, 'cent');
