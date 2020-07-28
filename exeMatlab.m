@@ -18,10 +18,10 @@
 % DEMO SCRIPT reproducing results from JSS publication. 
 %% Matlab version adapted:
 my = strsplit(version('-date'),',');
-if str2double(my{2})<2019
-    addpath('rprev2019')
+if str2double(my{2})<2020
+    addpath('rprev2020')
 else
-    addpath('rlater2019')
+    addpath('r2020')
 end
 %% Load data and build a PCA model
 load exampleX
