@@ -17,8 +17,8 @@
 %
 % DEMO SCRIPT reproducing results from JSS publication. 
 %% Matlab version adapted:
-my = strsplit(version('-date'),',');
-if str2double(my{2})<2020
+my = version('-release');
+if str2double(my(1:4))<2020
     addpath('rprev2020')
 else
     addpath('r2020')

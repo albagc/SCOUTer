@@ -67,7 +67,9 @@ T = pcaout.T;
 
 switch clicktoggle
     case 'off'
-        a1 = subplot(6, 6, 1:12);
+        a1 = gca;
+        a1.Position(2) = 0.2;
+        a1.Position(4) = 0.7;
         scoreplotsimple(T, pcx, pcy, obstag, pcamodel.alpha)
         spoint = scatter(0, 0, 25, 'Marker', 'o', ...
             'MarkerFaceColor', 'none', 'MarkerEdgeColor', 'none', ...
@@ -79,18 +81,12 @@ switch clicktoggle
             'HorizontalAlignment', 'left', 'FontSize', 7)
         
         legend('FontSize', 10, 'box', 'off', 'NumColumns', 1, ...
-            'Position', [0 0.4 1 0.05])
-        
-        annotation('textbox', [0.2, 0.35, 0.6, 0.05], 'String', ...
-            {'Select an observation from the plot above to display its SPE, its T^2 and its contributions:'}, ...
-            'FitBoxToText', 'on', 'BackgroundColor', 'w', 'HorizontalAlignment',...
-            'center', 'FontSize', 9, 'EdgeColor', 'none')
-        set(gcf, 'WindowButtonDownFcn', @onClickAction)
+            'Position', [0 0.02 1 0.1])
         
         fig = gcf;
         fig.Units = 'Normalized';
-        fig.Position(3) = 0.5;
-        fig.Position(4) = 0.35;
+        fig.Position(3) = 0.4;
+        fig.Position(4) = 0.45;
         
         hBr = brush;
         hBr.Enable = 'on';
