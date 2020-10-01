@@ -33,11 +33,15 @@ dscplot(X, pcamodel_ref, 'click', 'off');
 rng(1218);
 indsel = [1, 8, 15, 20, 24, 30, 35, 40];
 
-T2oboth = nan(numel(indsel), 1);
+Xobot = nan(numel(indsel), size(X,2));
+Xot2 = nan(numel(indsel), size(X,2));
+Xospe = nan(numel(indsel), size(X,2));
+
+T2obot = nan(numel(indsel), 1);
 T2ot2 = nan(numel(indsel), 1);
 T2ospe = nan(numel(indsel), 1);
 
-SPEoboth = nan(numel(indsel), 1);
+SPEobot = nan(numel(indsel), 1);
 SPEot2 = nan(numel(indsel), 1);
 SPEospe = nan(numel(indsel), 1);
 
@@ -48,11 +52,15 @@ for i = indsel
   ot2 = scout(x, pcamodel_ref,'simple', 't2y', 30 + unifrnd(-2,2));
   ospe = scout(x, pcamodel_ref, 'simple', 'spey', 30 + unifrnd(-2,2));
   
-  T2oboth(i,:) = oboth.T2;
+  Xobot(i,:) = oboth.X;
+  Xot2(i,:) = ot2.X;
+  Xospe(i,:) = ospe.X;
+  
+  T2obot(i,:) = oboth.T2;
   T2ot2(i,:) = ot2.T2;
   T2ospe(i,:) = ospe.T2;
   
-  SPEoboth(i,:) = oboth.SPE;
+  SPEobot(i,:) = oboth.SPE;
   SPEot2(i,:) = ot2.SPE;
   SPEospe(i,:) = ospe.SPE;
   
@@ -60,24 +68,20 @@ end
 
 X0 = X;
 X0([indsel,1,2, 9, 25],:) = [];
+Xall = vertcat(X0, Xobot, Xot2, Xospe);
 pcaxplot1 = pcame(X0, pcamodel_ref);
 
 markerstyle = {'bo','bsq','b+','b^'};
 facecol = 'b';
 
 figure,
-scatter(pcaxplot1.T2,pcaxplot1.SPE,'o','MarkerFaceColor','b','MarkerEdgeColor','none','MarkerFaceAlpha',0.6,'DisplayName','Non outlying'),hold on, grid on
-scatter(T2ot2,SPEot2,'sq','MarkerFaceColor','b','MarkerEdgeColor','none','MarkerFaceAlpha',0.6,'DisplayName','Extreme (good leverage) outliers'),
-scatter(T2ospe,SPEospe,'b+','MarkerFaceAlpha',0.6,'DisplayName','Moderate (orthogonal) outliers'),
-scatter(T2oboth,SPEoboth,'^','MarkerFaceColor','b','MarkerEdgeColor','none','MarkerFaceAlpha',0.6,'DisplayName','Extreme and moderate outliers'),
-plot(linspace(1,35,100),pcamodel_ref.limspe*ones(100,1),'r--','HandleVisibility','off'),
-plot(pcamodel_ref.limspe*ones(100,1),linspace(1,35,100),'r--','HandleVisibility','off'),
-title({'\fontsize{12} Distance plot','\rm \fontsize{9} UCL_9_5_%'}),
-%annotation('textbox',[0 0.8 0.05 0.1],'String','UCL_9_5_%','FitBoxToText','on')
-lg = legend('Location','southoutside','NumColumns',2); lg.Box = 'off';
-title(lg,'Observations');
-xlabel('\it T^2_A'), ylabel('\it SPE'), ylim([0,35]), xlim([0,35]),
-
+plot(pcaxplot1.T2,pcaxplot1.SPE,'bo','MarkerFaceColor','b','FaceAlpha',0.3,'DisplayName','Non outlying'),hold on
+plot(T2ot2,SPEot2,'bsq','MarkerFaceColor','b','FaceAlpha',0.3,'DisplayName','Extreme (good leverage) outliers'),
+plot(T2ospe,SPEospe,'b+','MarkerFaceColor','b','FaceAlpha',0.3,'DisplayName','Moderate (orthogonal) outliers'),
+plot(T2oboth,SPEoboth,'b^','MarkerFaceColor','b','FaceAlpha',0.3,'DisplayName','Extreme and moderate outliers'),
+plot(linspace(1,31,100),pcamodel_ref.limspe*ones(100,1),'r--'),
+plot(pcamodel_ref.limspe*ones(100,1),linspace(1,31,100),'r--'),
+xlabel('\it T^2'), ylabel('\it SPE'), 
 %% Switch on interactivity
 figure('Name', 'PCA Model plot'), 
 dscplot(X, pcamodel_ref, 'click', 'on');
