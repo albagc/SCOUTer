@@ -154,8 +154,8 @@ tagall = zeros(size(Xall, 1), 1);
 figure('Name', 'Steps in statistics'),
 subplot(121),
 for g = length(gparam):-1:1
-    plot(SPEgamma(:,g), 'ksq-', 'MarkerFaceColor', 'k'), hold on, grid on
-    text(2+g, SPEgamma(2+g, g) + 1, strcat('\gamma = ', ...
+    plot(SPEgamma(:,g), 'ksq-', 'MarkerFaceColor', 'k','MarkerSize',3), hold on, grid on
+    text(1.5+g, 0.9*SPEgamma(2+g, g) + 1, strcat('\gamma = ', ...
         string(gparam(g))), 'FontSize', 8, ...
         'Rotation', 40)
 end
@@ -163,7 +163,7 @@ xlim([0,11.5]),ylim([0,21])
 xlabel('steps'), ylabel('\it SPE'), title('\it SPE \rm curve with different \gamma')
 subplot(122),
 for g = length(gparam):-1:1
-    plot(T2gamma(:,g), 'ksq-', 'MarkerFaceColor', 'k'), hold on, grid on
+    plot(T2gamma(:,g), 'ksq-', 'MarkerFaceColor', 'k','MarkerSize',3), hold on, grid on
     text(1.5+g, T2gamma(2+g, g) + 0.5, strcat('\gamma = ', ...
         string(gparam(g))), 'FontSize', 8, ...
         'Rotation', 40)
@@ -173,13 +173,13 @@ xlabel('steps'), ylabel('\it T^2'), title('\it T^2 \rm curve with different \gam
 %%
 figure('Name', 'Distance plot with non-linear steps'), 
 for g = length(gparam):-1:1
-    plot(T2gamma(:,g), SPEgamma(:,numel(gparam)-g+1), 'ksq-', 'MarkerFaceColor', 'k'),
+    plot(T2gamma(:,g), SPEgamma(:,numel(gparam)-g+1), 'ksq-', 'MarkerFaceColor', 'k','MarkerSize',3),
     hold on, grid on,
     text(2 + 3*(g-1), 18-3.5*(g-1),{strcat('\gamma_{T^{2}} = ', ...
         string(gparam(g))),strcat("\gamma_{SPE} = ", ...
         string(gparam(numel(gparam) - g + 1)))}, ...
-        'FontSize', 8, ...
-        'Rotation', 0)
+        'FontSize', 7, ...
+        'Rotation', 10)
     
 end
 xlim([0,21]),ylim([0,21])
