@@ -84,10 +84,16 @@ dscplot(X, pcamodel_ref, 'click', 'on');
 %% SPE and H-T2 information
 % Find observation with maximum SPE and display its contributions
 [~, imaxspe] = max(pcaout.SPE);
+
+figure('Name', 'SPE information'),
+speinfo(pcaout.SPE, pcaout.E, pcamodel_ref.limspe, imaxspe);
+figure('Name', 'H-T2 information'),
+ht2info(pcaout.T2, pcaout.T2cont, pcamodel_ref.limt2, imaxspe);
+
 figure('Name', 'SPE and T2 information'),
 obscontribpanel(pcaout, pcamodel_ref.limspe, pcamodel_ref.limt2, imaxspe);
 %% Select one observation randomly and generate the three types of outliers
-rng(0207)
+rng(0207) % Ensures the same results
 indsel = randperm(size(X, 1), 1);
 x = X(indsel, :);
 out_x_both = scout(x, pcamodel_ref, 'simple', 'spey', 20, 't2y', 20); 
@@ -104,16 +110,16 @@ dscplot(Xall, pcamodel_ref, 'click', 'on', 'obstag', obstag, ...
 
 %% Generate a set of outliers increasing only the T^2 (one step)
 T2target = 40*ones(size(X, 1), 1);
-Xextreme = scout(X, pcamodel_ref, 'simple', 't2y', T2target);
-Xall = [X; Xextreme.X];
-obstag = [zeros(size(X, 1), 1); Xextreme.tag];
-figure('Name', 'PCA Model plot'), 
+outonestep = scout(X, pcamodel_ref, 'simple', 't2y', T2target);
+Xall = [X; outonestep.X];
+obstag = [zeros(size(X, 1), 1); outonestep.tag];
+figure('Name', 'PCA Model plot inter off'), 
 dscplot(Xall, pcamodel_ref, 'click', 'off', 'obstag', obstag, ...
-     'steps_spe', Xextreme.step_spe, 'steps_t2', Xextreme.step_t2);
+     'steps_spe', outonestep.step_spe, 'steps_t2', outonestep.step_t2);
 
-figure('Name', 'PCA Model plot'), 
+figure('Name', 'PCA Model plot inter on'), 
 dscplot(Xall, pcamodel_ref, 'click', 'on', 'obstag', obstag, ...
-     'steps_spe', Xextreme.step_spe, 'steps_t2', Xextreme.step_t2);
+     'steps_spe', outonestep.step_spe, 'steps_t2', outonestep.step_t2);
 
 %% Select the set by brushing observations
 figure('Name', 'PCA Model plot'), 
@@ -134,6 +140,15 @@ dscplot(Xall, pcamodel_ref, 'click', 'off', 'obstag', obstag, ...
 figure('Name', 'PCA Model plot'), 
 dscplot(Xall, pcamodel_ref, 'click', 'on', 'obstag', obstag, ...
      'steps_spe', outsteps.step_spe, 'steps_t2', outsteps.step_t2);
+%% Generate one outlier with 10 steps non-linearly spaced 
+outsteps_2 = scout(x, pcamodel_ref, 'steps', 't2y', 40, 'spey', 40, 'nsteps', 10,...
+    'gspe',1.5,'gt2',0.5);
+Xall = [x; outsteps_2.X];
+obstag = [0; outsteps_2.tag];
+
+figure('Name', 'PCA Model plot'), 
+dscplot(Xall, pcamodel_ref, 'click', 'off', 'obstag', obstag, ...
+     'steps_spe', outsteps_2.step_spe, 'steps_t2', outsteps_2.step_t2);
 %% Generate a series of outliers with 10 steps linearly and non-linearly spaced
 gparam = [0.3, 0.5, 1, 1.5, 3];
 pcaout = pcame(x,pcamodel_ref);
