@@ -29,6 +29,61 @@ pcamodel_ref = pcamb_classic(X, 2, 0.05, 'cent');
 pcaout = pcame(X, pcamodel_ref);
 figure('Name', 'PCA Model for reference data set')
 dscplot(X, pcamodel_ref, 'click', 'off');
+<<<<<<< Updated upstream
+=======
+
+ Xtbl = array2table(X);
+ writetable(Xtbl,'SCOUTer_examples.xlsx','Sheet','Reference')
+%% Plot different types of outliers
+rng(1218);
+indsel = [1, 8, 15, 20, 24, 30, 35, 40];
+
+T2oboth = nan(numel(indsel), 1);
+T2ot2 = nan(numel(indsel), 1);
+T2ospe = nan(numel(indsel), 1);
+
+SPEoboth = nan(numel(indsel), 1);
+SPEot2 = nan(numel(indsel), 1);
+SPEospe = nan(numel(indsel), 1);
+
+for i = indsel
+  x = X(i,:);
+  oboth = scout(x, pcamodel_ref, 'simple', 't2y', 30 + unifrnd(-2,2), ...
+                     'spey', 30 + unifrnd(-2,2));
+  ot2 = scout(x, pcamodel_ref,'simple', 't2y', 30 + unifrnd(-2,2));
+  ospe = scout(x, pcamodel_ref, 'simple', 'spey', 30 + unifrnd(-2,2));
+  
+  T2oboth(i,:) = oboth.T2;
+  T2ot2(i,:) = ot2.T2;
+  T2ospe(i,:) = ospe.T2;
+  
+  SPEoboth(i,:) = oboth.SPE;
+  SPEot2(i,:) = ot2.SPE;
+  SPEospe(i,:) = ospe.SPE;
+  
+end
+
+X0 = X;
+X0([indsel,1,2, 9, 25],:) = [];
+pcaxplot1 = pcame(X0, pcamodel_ref);
+
+markerstyle = {'bo','bsq','b+','b^'};
+facecol = 'b';
+
+figure,
+scatter(pcaxplot1.T2,pcaxplot1.SPE,'o','MarkerFaceColor','b','MarkerEdgeColor','none','MarkerFaceAlpha',0.6,'DisplayName','Non outlying'),hold on, grid on
+scatter(T2ot2,SPEot2,'sq','MarkerFaceColor','b','MarkerEdgeColor','none','MarkerFaceAlpha',0.6,'DisplayName','Extreme (good leverage) outliers'),
+scatter(T2ospe,SPEospe,'b+','MarkerFaceAlpha',0.6,'DisplayName','Moderate (orthogonal) outliers'),
+scatter(T2oboth,SPEoboth,'^','MarkerFaceColor','b','MarkerEdgeColor','none','MarkerFaceAlpha',0.6,'DisplayName','Extreme and moderate outliers'),
+plot(linspace(1,35,100),pcamodel_ref.limspe*ones(100,1),'r--','HandleVisibility','off'),
+plot(pcamodel_ref.limspe*ones(100,1),linspace(1,35,100),'r--','HandleVisibility','off'),
+title({'\fontsize{12} Distance plot','\rm \fontsize{9} UCL_9_5_%'}),
+%annotation('textbox',[0 0.8 0.05 0.1],'String','UCL_9_5_%','FitBoxToText','on')
+lg = legend('Location','southoutside','NumColumns',2); lg.Box = 'off';
+title(lg,'Observations');
+xlabel('\it T^2_A'), ylabel('\it SPE'), ylim([0,35]), xlim([0,35]),
+
+>>>>>>> Stashed changes
 %% Switch on interactivity
 figure('Name', 'PCA Model plot'), 
 dscplot(X, pcamodel_ref, 'click', 'on');
@@ -52,6 +107,10 @@ figure('Name', 'PCA Model plot'),
 dscplot(Xall, pcamodel_ref, 'click', 'on', 'obstag', obstag, ...
     'steps_spe', steps, 'steps_t2', steps);
 
+ Xtbl = array2table([Xall,obstag]);
+ Xtbl.Properties.VariableNames{end} = 'obstag';
+writetable(Xtbl,'SCOUTer_examples.xlsx','Sheet','ThreeRandom')
+
 %% Generate a set of outliers increasing only the T^2 (one step)
 T2target = 40*ones(size(X, 1), 1);
 Xextreme = scout(X, pcamodel_ref, 'simple', 't2y', T2target);
@@ -64,6 +123,10 @@ dscplot(Xall, pcamodel_ref, 'click', 'off', 'obstag', obstag, ...
 figure('Name', 'PCA Model plot'), 
 dscplot(Xall, pcamodel_ref, 'click', 'on', 'obstag', obstag, ...
      'steps_spe', Xextreme.step_spe, 'steps_t2', Xextreme.step_t2);
+
+ Xtbl = array2table([Xall,obstag]);
+ Xtbl.Properties.VariableNames{end} = 'obstag';
+ writetable(Xtbl,'SCOUTer_examples.xlsx','Sheet','T2_outliers')
 
 %% Select the set by brushing observations
 figure('Name', 'PCA Model plot'), 
@@ -84,6 +147,25 @@ dscplot(Xall, pcamodel_ref, 'click', 'off', 'obstag', obstag, ...
 figure('Name', 'PCA Model plot'), 
 dscplot(Xall, pcamodel_ref, 'click', 'on', 'obstag', obstag, ...
      'steps_spe', outsteps.step_spe, 'steps_t2', outsteps.step_t2);
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+%% Generate one outlier with 10 steps non-linearly spaced 
+outsteps_2 = scout(x, pcamodel_ref, 'steps', 't2y', 40, 'spey', 40, 'nsteps', 10,...
+    'gspe',1.5,'gt2',0.5);
+Xall = [x; outsteps_2.X];
+obstag = [0; outsteps_2.tag];
+
+figure('Name', 'PCA Model plot'), 
+dscplot(Xall, pcamodel_ref, 'click', 'off', 'obstag', obstag, ...
+     'steps_spe', outsteps_2.step_spe, 'steps_t2', outsteps_2.step_t2);
+=======
+ 
+ Xtbl = array2table([Xall,obstag]);
+ Xtbl.Properties.VariableNames{end} = 'obstag';
+ writetable(Xtbl,'SCOUTer_examples.xlsx','Sheet','TenSteps_linspace')
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 %% Generate a series of outliers with 10 steps linearly and non-linearly spaced
 gparam = [0.3, 0.5, 1, 1.5, 3];
 Xall = x;
@@ -110,3 +192,7 @@ dscplot(Xall, pcamodel_ref, 'click', 'off', 'obstag', obstag, ...
 figure('Name', 'PCA Model plot'), 
 dscplot(Xall, pcamodel_ref, 'click', 'on', 'obstag', obstag, ...
      'steps_spe', outgrid.step_spe, 'steps_t2', outgrid.step_t2);
+ 
+  Xtbl = array2table([Xall,obstag]);
+ Xtbl.Properties.VariableNames{end} = 'obstag';
+ writetable(Xtbl,'SCOUTer_examples.xlsx','Sheet','Grid_case')
