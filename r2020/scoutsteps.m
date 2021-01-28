@@ -94,7 +94,7 @@ end
 xi_step = reshape(repmat(1:k, n, 1), k*n, 1);
 if strcmp(pcamodel.prepro, 'cent')
     Xout = Xout + pcamodel.m;
-elseif strcmp(praref.prepro, 'autosc')
+elseif strcmp(pcamodel.prepro, 'autosc')
     Xout = (Xout .* repmat(pcamodel.s, size(Xout, 1), 1)) + pcamodel.m;
 end
 outscout.X = Xout;

@@ -54,7 +54,7 @@ switch pcamodel.prepro
 end
 T = Xaux * pcamodel.P;
 P = pcamodel.P;
-E = Xaux - T * P';
+E = Xaux - (T * P');
 SPE = sum(E .^ 2, 2);
 T2 = sum(T .^ 2 ./ pcamodel.lambda, 2);
 T2matrix = T(:, 1:pcamodel.ncomp) .^2 ./ repmat(pcamodel.lambda, n, 1);
@@ -65,4 +65,12 @@ pcaout.E = E;
 pcaout.SPE = SPE;
 pcaout.T2 = T2;
 pcaout.T2cont = T2matrix;
+switch pcamodel.prepro
+    case 'cent'
+        pcaout.Xhat = (T*P') + pcamodel.m;
+    case 'autosc'
+        pcaout.Xhat = ((T*P') .* repmat(pcamodel.s, n, 1)) + pcamodel.m;
+    case 'none'
+        pcaout.Xhat = (T*P');
+end
 end

@@ -50,7 +50,7 @@ function [pcamodel] = pcamb_classic(X, ncomp, alpha, prepro)
 %% Matlab Code 
 arguments
     X double
-    ncomp double {mustBeInRangeSize(ncomp,X,2)}
+    ncomp double {mustBeInRangeSize(ncomp, X, 2, 0)}
     alpha double {mustBeInRange(alpha, [0,1])} = 0.05
     prepro string {mustBeMember(prepro, ["cent", "autosc", "none"])} = "none"
 end
@@ -66,10 +66,13 @@ elseif strcmp(prepro, 'none')
     Xaux = X;
 end
 [~, D, V] = svd(Xaux);
+if ncomp == 0
+    ncomp = predncomp(cov(Xaux));
+end
 P = V(:, 1:ncomp);
-Tfull = Xaux * V;
+Tfull = Xaux * P;
 T = Xaux * P;
-E = Xaux - T * P';
+E = Xaux - (T * P');
 SPE = sum(E .^ 2, 2);
 Lambda = var(T);
 LambdaE = eig(cov(E));
@@ -78,20 +81,22 @@ T2 = sum(T .^2 ./ repmat(lambda, n, 1), 2);
 if strcmp(prepro, 'cent')
     Xrec = T * P' + m;
 elseif strcmp(prepro, 'autosc')
-    Xrec = (T * P') .* repmat(s, n, 1) + m;
+    Xrec = ((T * P') .* repmat(s, n, 1)) + m;
+else
+    Xrec = T*P';
 end
 % SPE upper control limit
-theta1 = sum(LambdaE(ncomp + 1 : end));
-theta2 = sum(LambdaE(ncomp + 1 : end) .^ 2);
-theta3 = sum(LambdaE(ncomp + 1 : end) .^ 3);
-h0 = 1 - 2 * theta1 * theta3 / (3 * theta2 ^ 2);
+theta1 = sum(LambdaE);
+theta2 = sum(LambdaE.^ 2);
+theta3 = sum(LambdaE.^ 3);
+h0 = 1 - (2 * theta1 * theta3 / (3 * theta2 ^ 2));
 z_alpha = norminv(1 - alpha);
-spe1 = z_alpha * sqrt(2 * theta2 * h0 ^ 2) / theta1;
+spe1 = z_alpha * sqrt(2 * theta2 * (h0 ^ 2)) / theta1;
 spe2 = theta2 * h0 * (h0 - 1) / (theta1 ^ 2);
 cl_spe = theta1 * ((spe1 + 1 + spe2) ^ (1 / h0));
 % T2 upper control limit
 F_alpha = finv(1 - alpha, ncomp, n - ncomp);
-cl_t2 = (n ^ 2 - 1) * ncomp / (n * (n - ncomp)) * F_alpha;
+cl_t2 = ((n ^ 2) - 1) * ncomp / (n * (n - ncomp)) * F_alpha;
 % Limits for scores
 z = ((n - 1) * (n - 1) / n) * betainv(1 - alpha, 1, (n - 3) / 2);
 limits_t = struct();
@@ -122,9 +127,9 @@ function mustBeInRange(arg,b)
             num2str(b(1)),'...',num2str(b(2))])
     end
 end
-function mustBeInRangeSize(arg,B,dimB)
-    if (arg < 2) || (arg > size(B,dimB))
+function mustBeInRangeSize(arg,B,dimB, liminf)
+    if (arg < liminf) || (arg > size(B,dimB))
         error(['Value assigned to Data is not in range ',...
-            num2str(2),'...',num2str(size(B,dimB))])
+            num2str(liminf),'...',num2str(size(B,dimB))])
     end
 end
