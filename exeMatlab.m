@@ -114,8 +114,9 @@ outonestep = scout(X, pcamodel_ref, 'simple', 't2y', T2target);
 Xall = [X; outonestep.X];
 obstag = [zeros(size(X, 1), 1); outonestep.tag];
 figure('Name', 'PCA Model plot inter off'), 
-dscplot(Xall, pcamodel_ref, 'click', 'off', 'obstag', obstag, ...
+distplot(Xall, pcamodel_ref, 'click', 'off', 'obstag', obstag, ...
      'steps_spe', outonestep.step_spe, 'steps_t2', outonestep.step_t2);
+legend('location','southoutside')
 
 figure('Name', 'PCA Model plot inter on'), 
 dscplot(Xall, pcamodel_ref, 'click', 'on', 'obstag', obstag, ...
@@ -134,8 +135,9 @@ Xall = [x; outsteps.X];
 obstag = [0; outsteps.tag];
 
 figure('Name', 'PCA Model plot'), 
-dscplot(Xall, pcamodel_ref, 'click', 'off', 'obstag', obstag, ...
+distplot(Xall, pcamodel_ref, 'click', 'off', 'obstag', obstag, ...
      'steps_spe', outsteps.step_spe, 'steps_t2', outsteps.step_t2);
+legend('location','southoutside')
 
 figure('Name', 'PCA Model plot'), 
 dscplot(Xall, pcamodel_ref, 'click', 'on', 'obstag', obstag, ...
@@ -207,8 +209,9 @@ Xall = [x; outgrid.X];
 obstag = [0; outgrid.tag];
 
 figure('Name', 'PCA Model plot'), 
-dscplot(Xall, pcamodel_ref, 'click', 'off', 'obstag', obstag, ...
+distplot(Xall, pcamodel_ref, 'click', 'off', 'obstag', obstag, ...
      'steps_spe', outgrid.step_spe, 'steps_t2', outgrid.step_t2);
+ legend('location','southoutside')
 
 figure('Name', 'PCA Model plot'), 
 dscplot(Xall, pcamodel_ref, 'click', 'on', 'obstag', obstag, ...
