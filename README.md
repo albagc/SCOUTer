@@ -16,3 +16,7 @@ Type:
 'help <function_name>' 
 in Matlab command window to get more information about <function_name>.m.
 Check _MatlabDocu.pdf_ with all the documentation about the functions in SCOUTer Matlab version.
+
+For more info, check the reference: https://www.researchgate.net/publication/350608406_How_to_Simulate_Outliers_with_the_Desired_Properties
+
+Enjoy! 
