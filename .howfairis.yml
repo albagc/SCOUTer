@@ -27,6 +27,4 @@ Repository's configuration file should follow the schema for it to be considered
 
 Calculated compliance: ● ● ○ ○ ○
 
-It seems you have not yet added the fair-software.eu badge to your README.md. You can do so by pasting the following snippet:
-
-[![fair-software.eu](https://img.shields.io/badge/fair--software.eu-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8B%20%20%E2%97%8B%20%20%E2%97%8B-orange)](https://fair-software.eu)
+Expected badge is equal to the actual badge. It's all good.
