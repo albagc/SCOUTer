@@ -22,6 +22,6 @@ Type:
 in Matlab command window to get more information about <function_name>.m.
 Check _MatlabDocu.pdf_ with all the documentation about the functions in SCOUTer Matlab version.
 
-For more info, check the reference: https://www.researchgate.net/publication/350608406_How_to_Simulate_Outliers_with_the_Desired_Properties
+For more info, check the reference: https://www.sciencedirect.com/science/article/pii/S0169743921000691
 
 Enjoy! 
