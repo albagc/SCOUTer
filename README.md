@@ -1,6 +1,7 @@
 # Simulate Controlled OUTliers - SCOUTer
 
 [![fair-software.eu](https://img.shields.io/badge/fair--software.eu-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8B%20%20%E2%97%8B%20%20%E2%97%8B-orange)](https://fair-software.eu)
+[![fair-software](https://github.com/albagc/SCOUTer/actions/workflows/fair-software.yml/badge.svg)](https://github.com/albagc/SCOUTer/actions/workflows/fair-software.yml)
 
 (Matlab version)
 
